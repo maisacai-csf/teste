@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css">
+  <title>Cardápio Digital</title>
+</head>
+<body>
+
+  <header>
+    <h1>Cardápio</h1>
+    <p>Escolha seu pedido</p>
+    <button id="abrirCarrinho" onclick="toggleCarrinho()">🛒
+      <span id="contadorCarrinho">0</span>
+    </button>
+  </header>
+
+  <div class="container">
+
+    <!-- PRODUTOS DO PAINEL ADMIN -->
+    <h2>🍧 Cardápio da Loja</h2>
+    <div id="produtosFirebase"></div>
+
+
+    <!-- AÇAÍS FIXOS -->
+    <h2>🥣 Açaís Especiais</h2>
+
+  </div>
+
+  <footer>
+    <span id="total">Total: R$ 0,00</span>
+    <button onclick="finalizarPedido()">Finalizar Pedido</button>
+  </footer>
+
+  <aside id="carrinho" class="carrinho">
+    <h2>Carrinho</h2>
+    <ul id="listaCarrinho"></ul>
+  </aside>
+
+  <div id="finalizacao" class="finalizacao" onclick="fecharModal(event)">
+    <div class="box-final">
+      <h2>Finalizar Pedido</h2>
+      <input type="text" id="nomeCliente" placeholder="Seu nome">
+      <input type="tel" id="telefoneCliente" placeholder="Telefone / WhatsApp">
+      <input type="text" id="rua" placeholder="Rua e número">
+      <input type="text" id="bairro" placeholder="Bairro">
+      <textarea id="obsEntrega" placeholder="Referência, complemento..."></textarea>
+      <button onclick="enviarPedido()">Enviar Pedido</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+
+  <!-- 🔥 PUXAR PRODUTOS DO FIREBASE -->
+  <script type="module">
+    import { db } from "./firebase.js";
+    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const areaProdutos = document.getElementById("produtosFirebase");
+
+    async function carregarProdutosLoja() {
+      const snap = await getDocs(collection(db, "produtos"));
+
+      snap.forEach(doc => {
+        const p = doc.data();
+        if (!p.ativo) return;
+
+        areaProdutos.innerHTML += `
+          <div class="card">
+            <h3>${p.nome}</h3>
+            <p>Produto da loja</p>
+            <div class="price">R$ ${p.preco.toFixed(2)}</div>
+            <button onclick="adicionarItem('${p.nome}', ${p.preco})">
+              Adicionar
+            </button>
+          </div>
+        `;
+      });
+    }
+
+    carregarProdutosLoja();
+  </script>
+
+</body>
+</html>
