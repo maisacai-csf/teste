@@ -17,15 +17,7 @@
   </header>
 
   <div class="container">
-
-    <!-- PRODUTOS DO PAINEL ADMIN -->
-    <h2>🍧 Cardápio da Loja</h2>
-    <div id="produtosFirebase"></div>
-
-
-    <!-- AÇAÍS FIXOS -->
-    <h2>🥣 Açaís Especiais</h2>
-
+<div class="container" id="listaProdutos"></div>
   </div>
 
   <footer>
@@ -51,36 +43,7 @@
   </div>
 
   <script src="script.js"></script>
-
-  <!-- 🔥 PUXAR PRODUTOS DO FIREBASE -->
-  <script type="module">
-    import { db } from "./firebase.js";
-    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    const areaProdutos = document.getElementById("produtosFirebase");
-
-    async function carregarProdutosLoja() {
-      const snap = await getDocs(collection(db, "produtos"));
-
-      snap.forEach(doc => {
-        const p = doc.data();
-        if (!p.ativo) return;
-
-        areaProdutos.innerHTML += `
-          <div class="card">
-            <h3>${p.nome}</h3>
-            <p>Produto da loja</p>
-            <div class="price">R$ ${p.preco.toFixed(2)}</div>
-            <button onclick="adicionarItem('${p.nome}', ${p.preco})">
-              Adicionar
-            </button>
-          </div>
-        `;
-      });
-    }
-
-    carregarProdutosLoja();
-  </script>
-
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="cardapio.js"></script>
 </body>
 </html>
