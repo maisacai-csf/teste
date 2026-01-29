@@ -7,7 +7,7 @@ import {
 const container = document.getElementById("lista-produtos");
 
 // IMAGEM PADRÃO
-const IMAGEM_PADRAO = "imagens/images.png";
+const IMAGEM_PADRAO = "images.png";
 
 // BUSCAR PRODUTOS DO FIREBASE
 async function carregarProdutosSite() {
