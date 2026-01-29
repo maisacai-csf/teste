@@ -310,11 +310,16 @@ input, textarea, button {
 html {
   scroll-behavior: auto !important;
 }
-.img-produto {
-  width: 100%;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 10px;
+.card-topo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
 }
-
+.img-produto {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+}

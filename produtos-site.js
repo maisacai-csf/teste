@@ -9,7 +9,6 @@ const container = document.getElementById("lista-produtos");
 // IMAGEM PADRÃO
 const IMAGEM_PADRAO = "images.png";
 
-// BUSCAR PRODUTOS DO FIREBASE
 async function carregarProdutosSite() {
   container.innerHTML = "";
 
@@ -18,7 +17,6 @@ async function carregarProdutosSite() {
   snap.forEach(doc => {
     const p = doc.data();
 
-    // MOSTRAR SÓ OS ATIVOS
     if (p.ativo) {
 
       const imagemProduto = p.imagem && p.imagem.trim() !== ""
@@ -27,19 +25,26 @@ async function carregarProdutosSite() {
 
       container.innerHTML += `
         <div class="card">
-          <img src="${imagemProduto}" class="img-produto">
 
-          <h3>${p.nome}</h3>
+          <div class="card-topo">
+            <img src="${imagemProduto}" class="img-produto">
+            <div>
+              <h3>${p.nome}</h3>
+              <div class="price">R$ ${p.preco.toFixed(2)}</div>
+            </div>
+          </div>
+
           <p>${p.descricao || ""}</p>
-          <div class="price">R$ ${p.preco.toFixed(2)}</div>
 
           <button onclick="adicionarCarrinho('${p.nome}', ${p.preco})">
             Adicionar
           </button>
+
         </div>
       `;
     }
   });
 }
+
 
 carregarProdutosSite();
