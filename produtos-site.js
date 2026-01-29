@@ -6,6 +6,9 @@ import {
 
 const container = document.getElementById("lista-produtos");
 
+// IMAGEM PADRÃO
+const IMAGEM_PADRAO = "imagens/images.png";
+
 // BUSCAR PRODUTOS DO FIREBASE
 async function carregarProdutosSite() {
   container.innerHTML = "";
@@ -17,10 +20,19 @@ async function carregarProdutosSite() {
 
     // MOSTRAR SÓ OS ATIVOS
     if (p.ativo) {
+
+      const imagemProduto = p.imagem && p.imagem.trim() !== ""
+        ? p.imagem
+        : IMAGEM_PADRAO;
+
       container.innerHTML += `
-        <div class="produto-card">
+        <div class="card">
+          <img src="${imagemProduto}" class="img-produto">
+
           <h3>${p.nome}</h3>
-          <p>R$ ${p.preco.toFixed(2)}</p>
+          <p>${p.descricao || ""}</p>
+          <div class="price">R$ ${p.preco.toFixed(2)}</div>
+
           <button onclick="adicionarCarrinho('${p.nome}', ${p.preco})">
             Adicionar
           </button>
