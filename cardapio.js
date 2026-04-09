@@ -10,7 +10,7 @@ async function carregarCardapio() {
 
   snap.forEach(doc => {
     const p = doc.data();
-    if (!p.ativo) return;
+    if (p.ativo === false) return;
 
     let acompanhamentosHTML = "";
 

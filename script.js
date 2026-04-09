@@ -44,6 +44,7 @@ function adicionarItem(nome, preco, botao = null) {
   atualizarTotal();
   atualizarContador();
   animarCarrinho();
+  alert("Adicionado ao carrinho ✅");
 
   if (botao) {
     const card = botao.closest('.card');
