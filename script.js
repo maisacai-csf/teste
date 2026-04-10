@@ -5,45 +5,54 @@ function adicionarItem(nome, preco, botao = null) {
 
   let extras = "";
   let adicionais = [];
+  let precoAdicionais = 0;
 
   if (botao) {
     const card = botao.closest('.card');
-    const checks = card.querySelectorAll('input[type="checkbox"]:checked');
 
-    if (checks.length === 0) {
+    const checks = card.querySelectorAll('input[type="checkbox"]');
+    const selecionados = card.querySelectorAll('input[type="checkbox"]:checked');
+
+    const temAdicionais = checks.length > 0;
+
+    if (temAdicionais && selecionados.length === 0) {
       alert("Escolha pelo menos 1 adicional 😅");
       return;
     }
 
-    const acompanhamentos = [];
-    const utensilios = [];
-    let leite = "";
+    selecionados.forEach(c => {
+      const texto = c.parentElement.textContent.trim();
 
-    checks.forEach(c => {
-      adicionais.push(c.value);
+      adicionais.push(texto);
 
-      if (c.value === "Colher" || c.value === "Canudo") {
-        utensilios.push(c.value);
-      } else if (c.value === "Sim" || c.value === "Não") {
-        leite = c.value;
-      } else {
-        acompanhamentos.push(c.value);
+      // 🔥 pega o preço do adicional (do texto)
+      const match = texto.match(/R\$\s?([\d,.]+)/);
+
+      if (match) {
+        const valor = parseFloat(match[1].replace(",", "."));
+        precoAdicionais += valor;
       }
     });
 
-    extras += acompanhamentos.length ? `\n+ ${acompanhamentos.join("\n+ ")}` : "";
-    extras += utensilios.length ? `\nUtensílios: ${utensilios.join(", ")}` : "";
-    extras += leite ? `\nLeite Condensado: ${leite}` : "";
+    if (adicionais.length) {
+      extras += `\n+ ${adicionais.join("\n+ ")}`;
+    }
   }
 
   const nomeFinal = nome + extras;
 
-  carrinho.push({ nome: nomeFinal, preco, qtd: 1, adicionais });
+  carrinho.push({
+    nome: nomeFinal,
+    preco: preco + precoAdicionais,
+    qtd: 1,
+    adicionais
+  });
 
   atualizarCarrinho();
   atualizarTotal();
   atualizarContador();
   animarCarrinho();
+
   alert("Adicionado ao carrinho ✅");
 
   if (botao) {
@@ -64,8 +73,9 @@ function atualizarCarrinho() {
 
   carrinho.forEach((item, index) => {
     const li = document.createElement("li");
+
     li.innerHTML = `
-      <strong>${item.nome}</strong><br>
+      <strong>${item.nome.replace(/\n/g, "<br>")}</strong><br>
       Quantidade: ${item.qtd}<br>
       Subtotal: R$ ${(item.preco * item.qtd).toFixed(2).replace('.', ',')}<br>
 
@@ -73,6 +83,7 @@ function atualizarCarrinho() {
       <button onclick="aumentarQtd(${index})">➕</button>
       <button onclick="removerItem(${index})">❌</button>
     `;
+
     lista.appendChild(li);
   });
 }
@@ -105,7 +116,10 @@ function diminuirQtd(index) {
 
 function atualizarTotal() {
   total = 0;
-  carrinho.forEach(item => total += item.preco * item.qtd);
+
+  carrinho.forEach(item => {
+    total += item.preco * item.qtd;
+  });
 
   document.getElementById("total").innerText =
     `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
@@ -113,7 +127,11 @@ function atualizarTotal() {
 
 function atualizarContador() {
   let totalItens = 0;
-  carrinho.forEach(item => totalItens += item.qtd);
+
+  carrinho.forEach(item => {
+    totalItens += item.qtd;
+  });
+
   document.getElementById("contadorCarrinho").innerText = totalItens;
 }
 
@@ -181,14 +199,17 @@ function enviarPedido() {
 
 function fecharModal(event) {
   const box = document.querySelector(".box-final");
+
   if (!box.contains(event.target)) {
     document.getElementById("finalizacao").style.display = "none";
   }
 }
 
-document.querySelectorAll('.aba-adicionais input').forEach(el => {
-  el.addEventListener("mousedown", e => {
+// 🔥 impede fechar card ao clicar nos adicionais
+document.addEventListener("click", function (e) {
+  if (e.target.closest(".lista-check")) {
     e.stopPropagation();
-  });
+  }
 });
+
 atualizarCarrinho();
